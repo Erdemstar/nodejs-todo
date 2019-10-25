@@ -1,0 +1,84 @@
+<% include partials/header %>
+<% include partials/menu %>
+
+
+
+<div class="container">
+    <!-- Show task / Delete / Did it -->
+    <% var count = 1%>
+    <% task.forEach(function(data){%>
+    <div class="input-group" style="margin-top: 3%">
+        <input type="text" class="form-control" id="<%=data.myid%>" name="input-<%=count%>"
+            aria-label="Text input with dropdown button" value="<%=data.task%>">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">Options</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" id="deleteTask" onclick="Delete('input-<%=count%>')">Delete</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item" id="diditTask" onclick="Didit('input-<%=count%>')">Did it</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item" id="updateTask" onclick="Update('input-<%=count%>')">Update</a>
+            </div>
+        </div>
+    </div>
+    <% count += 1%>
+    <%});%>
+    <br>
+    <!-- Add task -->
+    <div class="input-group mb-3" style="margin-top: 10%">
+        <input name="task" type="text" class="form-control" placeholder="Recipient's username"
+            aria-label="Recipient's username" aria-describedby="button-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="Ekle()">Task</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+
+    function Ekle() {
+        var tmp = document.getElementsByName("task");
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.1.2:3000/task/add", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            task: tmp[0].value, isFinish: false
+        }));
+        location.reload()
+    }
+
+    function Delete(id) {
+        var input = document.getElementsByName(id);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.1.2:3000/task/delete", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            task: input[0].value
+        }));
+        location.reload()
+    }
+    function Didit(id) {
+        var input = document.getElementsByName(id);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.1.2:3000/task/didIT", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            task: input[0].value, isFinish: true
+        }));
+        location.reload()
+
+    }
+    function Update(id) {
+        var input = document.getElementsByName(id);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.1.2:3000/task/update", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            task: input[0].value, myid: input[0].getAttribute('id')
+        }));
+    }
+
+</script>
+<% include partials/footer %>
